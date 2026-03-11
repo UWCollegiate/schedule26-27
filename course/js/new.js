@@ -56,7 +56,7 @@ function createElements(containerName, data) {
 }
 
 for (let i of ["grade9", "grade10", "grade11", "grade12", "dualcredit"]) {
-    loadCSV(`data/${i}.csv`).then(r => createElements(i, r));
+    loadCSV(`data/${localStorage.version}/${i}.csv`).then(r => createElements(i, r));
 }
 for (let i of ["core9", "core10"]) {
     loadCSV(`data/${i}.csv`).then(r =>
