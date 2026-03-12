@@ -15,6 +15,8 @@ document.querySelectorAll(".gradeHeader").forEach((gradeHeader) => {
     });
 });
 
+const MAX_CLASSES = 9;
+
 function courseIsSelected(courses, name) {
     return Object.prototype.hasOwnProperty.call(courses, name);
 }
@@ -22,7 +24,10 @@ function courseIsSelected(courses, name) {
 function updateCourseButton(button, name) {
     let courses = JSON.parse(localStorage.courses);
     let selected = courseIsSelected(courses, name);
+    let atLimit = Object.keys(courses).length >= MAX_CLASSES;
+
     button.classList.toggle("selected", selected);
+    button.disabled = !selected && atLimit;
     button.setAttribute("aria-pressed", selected ? "true" : "false");
 }
 
@@ -43,7 +48,7 @@ function addCourse(button, name, slots) {
         return;
     }
 
-    if (!replacing && Object.keys(courses).length >= 9) {
+    if (!replacing && Object.keys(courses).length >= MAX_CLASSES) {
         alert("Too many classes selected!");
         return;
     }
@@ -113,6 +118,14 @@ async function initPage() {
                 if (!r) return;
 
                 let courses = JSON.parse(localStorage.courses);
+                let replacing = JSON.parse(localStorage.replacing);
+                let newCourseNames = Object.keys(r).filter((name) => !courseIsSelected(courses, name));
+
+                if (!replacing && Object.keys(courses).length + newCourseNames.length > MAX_CLASSES) {
+                    alert("Too many classes selected!");
+                    refreshCourseButtons();
+                    return;
+                }
 
                 for (let [name, slots] of Object.entries(r)) {
                     courses[name] = {
@@ -121,12 +134,18 @@ async function initPage() {
                     };
                 }
 
-                let replacing = JSON.parse(localStorage.replacing);
                 if (replacing) delete courses[replacing];
 
                 localStorage.courses = JSON.stringify(courses);
-                prepareForNavigation();
-                location.href = "index.html";
+                localStorage.replacing = JSON.stringify(null);
+
+                if (replacing) {
+                    prepareForNavigation();
+                    location.href = "index.html";
+                    return;
+                }
+
+                refreshCourseButtons();
             })
         );
     }

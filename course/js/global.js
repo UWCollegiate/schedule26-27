@@ -5,6 +5,24 @@ const storageDefaults = {
     versionOverride: false
 };
 
+async function ensureFreshPage() {
+    let url = new URL(window.location.href);
+    if (url.searchParams.get("reloaded") === "1") return;
+
+    let response = await fetch(uncachedPath(url.pathname), {
+        cache: "no-store",
+        method: "HEAD"
+    });
+    let lastModified = response.headers.get("last-modified");
+
+    if (lastModified && document.lastModified && lastModified !== document.lastModified) {
+        url.searchParams.set("reloaded", "1");
+        url.searchParams.set("t", Date.now().toString());
+        window.location.replace(url.toString());
+        return;
+    }
+}
+
 window.addEventListener("pageshow", (event) => {
     if (event.persisted) {
         window.location.reload();
@@ -56,6 +74,7 @@ function resetTransientData() {
 }
 
 async function initData() {
+    await ensureFreshPage();
     ensureStorageDefaults();
 
     let version = await loadVer();
