@@ -98,7 +98,7 @@ run().then(solutions => {
     show(currentSelected);
 
     document.getElementById("print").addEventListener('click', async () => {
-        let defaultPDF = await fetch("data/timetable.pdf").then((res) => res.arrayBuffer());
+        let defaultPDF = await fetch(uncachedPath("data/timetable.pdf"), { cache: "no-store" }).then((res) => res.arrayBuffer());
         let pdf = await PDFLib.PDFDocument.load(defaultPDF);
         let page = pdf.getPages()[0];
         let font = await pdf.embedFont(PDFLib.StandardFonts.TimesRoman);

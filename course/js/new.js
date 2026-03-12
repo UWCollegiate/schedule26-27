@@ -25,11 +25,12 @@ function addCourse(name, slots) {
     if (replacing) delete courses[replacing];
 
     localStorage.courses = JSON.stringify(courses);
+    prepareForNavigation();
     location.href = "index.html";
 }
 
 async function loadCSV(path) {
-    let response = await fetch(path);
+    let response = await fetch(uncachedPath(path), { cache: "no-store" });
     if (response.ok) {
         let text = await response.text();
         // ignore first row
@@ -82,6 +83,7 @@ async function initPage() {
                 if (replacing) delete courses[replacing];
 
                 localStorage.courses = JSON.stringify(courses);
+                prepareForNavigation();
                 location.href = "index.html";
             })
         );

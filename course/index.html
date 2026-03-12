@@ -2,23 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-store, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>course selector</title>
     <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="global.css">
 </head>
 <body>
     <div id="top">
-        <a href="index.html">
+        <a href="index.html" onclick="prepareForNavigation()">
             <h1>Course Selector</h1>
         </a>
         <!-- doing this because putting it in an <a> messes with the formating -->
-        <button id="add" onclick="location.href = 'new.html'">Add Course</button>
-        <button id="create" onclick="location.href = 'create.html'">Create Schedules</button>
+        <button id="add" onclick="prepareForNavigation(); location.href = 'new.html'">Add Course</button>
+        <button id="create" onclick="prepareForNavigation(); location.href = 'create.html'">Create Schedules</button>
     </div>
     <div id="main">
         <div id="courseContainer"></div>
     </div>
-    <button id="restrictions" onclick="location.href = 'restrictions.html'">Change Restrictions</button>
+    <button id="restrictions" onclick="prepareForNavigation(); location.href = 'restrictions.html'">Change Restrictions</button>
     <script src="js/global.js"></script>
     <script src="js/index.js"></script>
 </body>

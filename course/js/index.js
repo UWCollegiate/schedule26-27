@@ -9,6 +9,7 @@ function removeCourse(name) {
 
 function replaceCourse(name) {
     localStorage.replacing = JSON.stringify(name);
+    prepareForNavigation();
     location.href = "new.html";
 }
 

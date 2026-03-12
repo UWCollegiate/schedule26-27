@@ -5,8 +5,23 @@ const storageDefaults = {
     versionOverride: false
 };
 
+function prepareForNavigation() {
+    sessionStorage.setItem("preserveAppState", "true");
+}
+
+function shouldPreserveAppState() {
+    let preserveAppState = sessionStorage.getItem("preserveAppState") === "true";
+    sessionStorage.removeItem("preserveAppState");
+    return preserveAppState;
+}
+
+function uncachedPath(path) {
+    let joiner = path.includes("?") ? "&" : "?";
+    return `${path}${joiner}t=${Date.now()}`;
+}
+
 async function loadVer() {
-    let res = await fetch("data/version.txt");
+    let res = await fetch(uncachedPath("data/version.txt"), { cache: "no-store" });
     return (await res.text()).trim();
 }
 
@@ -34,12 +49,6 @@ function resetTransientData() {
     localStorage.replacing = JSON.stringify(storageDefaults.replacing);
 }
 
-function isReloadNavigation() {
-    let navigationEntry = performance.getEntriesByType("navigation")[0];
-    if (navigationEntry) return navigationEntry.type === "reload";
-    return performance.navigation?.type === 1;
-}
-
 async function initData() {
     ensureStorageDefaults();
 
@@ -58,7 +67,7 @@ async function initData() {
         return;
     }
 
-    if (isReloadNavigation()) resetTransientData();
+    if (!shouldPreserveAppState()) resetTransientData();
 
     document.dispatchEvent(new CustomEvent("app-data-ready", {
         detail: { version: localStorage.version }
@@ -66,6 +75,8 @@ async function initData() {
 }
 
 window.appDataReady = initData();
+window.prepareForNavigation = prepareForNavigation;
+window.uncachedPath = uncachedPath;
 
 document.addEventListener("keydown", (event) => {
     if (event.ctrlKey && event.key === "`") {
