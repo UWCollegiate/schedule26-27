@@ -5,6 +5,12 @@ const storageDefaults = {
     versionOverride: false
 };
 
+window.addEventListener("pageshow", (event) => {
+    if (event.persisted) {
+        window.location.reload();
+    }
+});
+
 function prepareForNavigation() {
     sessionStorage.setItem("preserveAppState", "true");
 }

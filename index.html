@@ -1,11 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="refresh" content="0; url=course/index.html">
     <meta http-equiv="Cache-Control" content="no-store, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>Redirecting...</title>
+    <script>
+        window.addEventListener("pageshow", (event) => {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        });
+
+        window.location.replace(`course/index.html?t=${Date.now()}`);
+    </script>
 </head>
 <body>
     <p><a href="course/index.html">Click here</a> if you are not automatically redirected.</p>
