@@ -43,10 +43,13 @@ async function loadCSV(path) {
         });
         return items;
     }
+
+    return null;
 }
 
 function createElements(containerName, data) {
     let gradeContent = document.getElementById(containerName);
+    if (!data) return;
 
     for (let [key, value] of Object.entries(data)) {
         gradeContent.insertAdjacentHTML("beforeend", `
@@ -55,26 +58,34 @@ function createElements(containerName, data) {
     }
 }
 
-for (let i of ["grade9", "grade10", "grade11", "grade12", "dualcredit"]) {
-    loadCSV(`data/${localStorage.version}/${i}.csv`).then(r => createElements(i, r));
+async function initPage() {
+    await window.appDataReady;
+
+    for (let i of ["grade9", "grade10", "grade11", "grade12", "dualcredit"]) {
+        loadCSV(`data/${localStorage.version}/${i}.csv`).then(r => createElements(i, r));
+    }
+    for (let i of ["core9", "core10"]) {
+        loadCSV(`data/${i}.csv`).then(r =>
+            document.getElementById(i).addEventListener("click", () => {
+                if (!r) return;
+
+                let courses = JSON.parse(localStorage.courses);
+
+                for (let [name, slots] of Object.entries(r)) {
+                    courses[name] = {
+                        slots: slots,
+                        restrictions: Array(9).fill(true)
+                    };
+                }
+
+                let replacing = JSON.parse(localStorage.replacing);
+                if (replacing) delete courses[replacing];
+
+                localStorage.courses = JSON.stringify(courses);
+                location.href = "index.html";
+            })
+        );
+    }
 }
-for (let i of ["core9", "core10"]) {
-    loadCSV(`data/${i}.csv`).then(r =>
-        document.getElementById(i).addEventListener("click", () => {
-            let courses = JSON.parse(localStorage.courses);
 
-            for (let [name, slots] of Object.entries(r)) {
-                courses[name] = {
-                    slots: slots,
-                    restrictions: Array(9).fill(true)
-                };
-            }
-
-            let replacing = JSON.parse(localStorage.replacing);
-            if (replacing) delete courses[replacing];
-
-            localStorage.courses = JSON.stringify(courses);
-            location.href = "index.html";
-        })
-    );
-}
+initPage();
