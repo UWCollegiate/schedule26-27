@@ -191,13 +191,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .gradeButton.selected {
-    background-color: #6f42c1;
+    background-color: #2f9e44;
     color: #ffffff;
-    box-shadow: inset 0 0 0 2px #512b8b;
+    box-shadow: inset 0 0 0 2px #237a34;
 }
 
 .gradeButton.selected:hover {
-    background-color: #5a32a3;
+    background-color: #237a34;
 }
 
 #core9, #core10 {
