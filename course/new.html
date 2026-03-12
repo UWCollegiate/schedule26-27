@@ -7,7 +7,13 @@
     <meta http-equiv="Expires" content="0">
     <title>course selector</title>
     <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="global.css">
+    <script>
+        window.assetVersion = Date.now();
+        let stylesheet = document.createElement("link");
+        stylesheet.rel = "stylesheet";
+        stylesheet.href = `global.css?v=${window.assetVersion}`;
+        document.head.appendChild(stylesheet);
+    </script>
 </head>
 <body>
     <div id="top">
@@ -41,7 +47,16 @@
             </div>
         </div>
     </div>
-    <script src="js/global.js"></script>
-    <script src="js/new.js"></script>
+    <script>
+        function appendScript(src, type = "text/javascript") {
+            let script = document.createElement("script");
+            script.src = `${src}?v=${window.assetVersion}`;
+            script.type = type;
+            document.body.appendChild(script);
+        }
+
+        appendScript("js/global.js");
+        appendScript("js/new.js");
+    </script>
 </body>
 </html>
