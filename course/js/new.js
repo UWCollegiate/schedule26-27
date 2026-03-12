@@ -24,10 +24,8 @@ function courseIsSelected(courses, name) {
 function updateCourseButton(button, name) {
     let courses = JSON.parse(localStorage.courses);
     let selected = courseIsSelected(courses, name);
-    let atLimit = Object.keys(courses).length >= MAX_CLASSES;
 
     button.classList.toggle("selected", selected);
-    button.disabled = !selected && atLimit;
     button.setAttribute("aria-pressed", selected ? "true" : "false");
 }
 
