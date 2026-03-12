@@ -28,6 +28,18 @@ function ensureStorageDefaults() {
     }
 }
 
+function resetTransientData() {
+    localStorage.courses = JSON.stringify(storageDefaults.courses);
+    localStorage.spareRestrictions = JSON.stringify(storageDefaults.spareRestrictions);
+    localStorage.replacing = JSON.stringify(storageDefaults.replacing);
+}
+
+function isReloadNavigation() {
+    let navigationEntry = performance.getEntriesByType("navigation")[0];
+    if (navigationEntry) return navigationEntry.type === "reload";
+    return performance.navigation?.type === 1;
+}
+
 async function initData() {
     ensureStorageDefaults();
 
@@ -45,6 +57,8 @@ async function initData() {
         location.href = "index.html";
         return;
     }
+
+    if (isReloadNavigation()) resetTransientData();
 
     document.dispatchEvent(new CustomEvent("app-data-ready", {
         detail: { version: localStorage.version }
