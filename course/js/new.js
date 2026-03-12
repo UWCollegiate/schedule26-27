@@ -43,6 +43,11 @@ function addCourse(button, name, slots) {
         return;
     }
 
+    if (!replacing && Object.keys(courses).length >= 9) {
+        alert("Too many classes selected!");
+        return;
+    }
+
     courses[name] = {
         slots: slots,
         restrictions: Array(9).fill(true)
