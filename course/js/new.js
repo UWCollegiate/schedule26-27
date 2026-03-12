@@ -24,6 +24,13 @@ function addCourse(button, name, slots) {
     let courses = JSON.parse(localStorage.courses);
     let replacing = JSON.parse(localStorage.replacing);
 
+    if (!replacing && Object.hasOwn(courses, name)) {
+        delete courses[name];
+        localStorage.courses = JSON.stringify(courses);
+        updateCourseButton(button, name);
+        return;
+    }
+
     courses[name] = {
         slots: slots,
         restrictions: Array(9).fill(true)
