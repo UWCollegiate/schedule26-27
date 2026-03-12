@@ -15,19 +15,31 @@ document.querySelectorAll(".gradeHeader").forEach((gradeHeader) => {
     });
 });
 
+function courseIsSelected(courses, name) {
+    return Object.prototype.hasOwnProperty.call(courses, name);
+}
+
 function updateCourseButton(button, name) {
     let courses = JSON.parse(localStorage.courses);
-    button.classList.toggle("selected", Object.hasOwn(courses, name));
+    let selected = courseIsSelected(courses, name);
+    button.classList.toggle("selected", selected);
+    button.setAttribute("aria-pressed", selected ? "true" : "false");
+}
+
+function refreshCourseButtons() {
+    document.querySelectorAll(".gradeButton").forEach((button) => {
+        updateCourseButton(button, button.dataset.courseName);
+    });
 }
 
 function addCourse(button, name, slots) {
     let courses = JSON.parse(localStorage.courses);
     let replacing = JSON.parse(localStorage.replacing);
 
-    if (!replacing && Object.hasOwn(courses, name)) {
+    if (!replacing && courseIsSelected(courses, name)) {
         delete courses[name];
         localStorage.courses = JSON.stringify(courses);
-        updateCourseButton(button, name);
+        refreshCourseButtons();
         return;
     }
 
@@ -47,7 +59,7 @@ function addCourse(button, name, slots) {
         return;
     }
 
-    updateCourseButton(button, name);
+    refreshCourseButtons();
 }
 
 async function loadCSV(path) {
@@ -76,6 +88,7 @@ function createElements(containerName, data) {
     for (let [key, value] of Object.entries(data)) {
         let button = document.createElement("button");
         button.classList.add("gradeButton");
+        button.dataset.courseName = key;
         button.textContent = key;
         updateCourseButton(button, key);
         button.addEventListener("click", () => addCourse(button, key, value));
