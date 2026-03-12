@@ -15,18 +15,32 @@ document.querySelectorAll(".gradeHeader").forEach((gradeHeader) => {
     });
 });
 
-function addCourse(name, slots) {
+function updateCourseButton(button, name) {
     let courses = JSON.parse(localStorage.courses);
+    button.classList.toggle("selected", Object.hasOwn(courses, name));
+}
+
+function addCourse(button, name, slots) {
+    let courses = JSON.parse(localStorage.courses);
+    let replacing = JSON.parse(localStorage.replacing);
+
     courses[name] = {
         slots: slots,
         restrictions: Array(9).fill(true)
     };
-    let replacing = JSON.parse(localStorage.replacing);
+
     if (replacing) delete courses[replacing];
 
     localStorage.courses = JSON.stringify(courses);
-    prepareForNavigation();
-    location.href = "index.html";
+    localStorage.replacing = JSON.stringify(null);
+
+    if (replacing) {
+        prepareForNavigation();
+        location.href = "index.html";
+        return;
+    }
+
+    updateCourseButton(button, name);
 }
 
 async function loadCSV(path) {
@@ -53,9 +67,12 @@ function createElements(containerName, data) {
     if (!data) return;
 
     for (let [key, value] of Object.entries(data)) {
-        gradeContent.insertAdjacentHTML("beforeend", `
-            <button class="gradeButton" onclick="addCourse('${key}', [${value}])">${key}</button>
-        `)
+        let button = document.createElement("button");
+        button.classList.add("gradeButton");
+        button.textContent = key;
+        updateCourseButton(button, key);
+        button.addEventListener("click", () => addCourse(button, key, value));
+        gradeContent.appendChild(button);
     }
 }
 
